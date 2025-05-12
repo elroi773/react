@@ -1,13 +1,16 @@
-body{
-    background:#1b1921;
-    --color-menu:#2b2935;
-}
-
-.dropdown{
+/* 기본 배경색 설정 */
+body {
+    background: #1b1921;
+    --color-menu: #2b2935;
+  }
+  
+  /* 드롭다운 전체 래퍼 */
+  .dropdown {
     position: relative;
-}
-
-button{
+  }
+  
+  /* 버튼 공통 스타일 */
+  button {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -15,50 +18,21 @@ button{
     width: 204px;
     height: 64px;
     color: #afb3b5;
-    background:var(--color-menu);
+    background: var(--color-menu);
     border: 0;
     transition: 0.3s ease;
-}
-
-.dropdown > button{
+    cursor: pointer;
+  }
+  
+  /* 최상위 드롭다운 버튼 스타일 */
+  .dropdown > button {
     background: #6f3dcd;
     border-radius: 10px;
     color: #f9f9f9;
-}
-
-.menu-inner{
-    position: absolute;
-    width: 460px;
-    display: flex;
-    transition: 0.4s ease;
-}
-
-.menu-inner .open{
-    translate: -50%;
-}
-
-.menu button{
-    border: 0;
-    height: 56px;
-    border-radius: 0;
-}
-
-.menu button:hover{
-    background:#393646;
-    color: #f9f9f9;
-}
-
-.chevron {
-    margin-left: auto;
-    transition: 0.3s ease;
-}
-
-.sub-menu .open{
-    opacity: 1;
-    visibility: visible;
-}
-
-.menu{
+  }
+  
+  /* 드롭다운 메뉴 컨테이너 */
+  .menu {
     position: absolute;
     overflow: hidden;
     z-index: 1;
@@ -69,26 +43,68 @@ button{
     translate: 0 -20px;
     visibility: hidden;
     border-radius: 10px;
-    border-radius: 10px;
     background: var(--color-menu);
     transition: 0.3s ease;
-}
-
-.dropdown .open > button .chevron{
-    rotate: -180deg;
-}
-
-.dropdown .open .menu{
+  }
+  
+  /* 드롭다운 열릴 때 메뉴 표시 */
+  .dropdown.open .menu {
     opacity: 1;
     translate: 0;
     visibility: visible;
-}
-
-.sub-menu{
+  }
+  
+  /* 내부 메뉴 정렬 (메인 메뉴 + 서브 메뉴) */
+  .menu-inner {
+    position: absolute;
+    width: 460px;
+    display: flex;
+    transition: 0.4s ease;
+  }
+  
+  /* 메뉴 내부가 열렸을 때 */
+  .menu-inner.open {
+    translate: -50%;
+  }
+  
+  /* 개별 메뉴 버튼 */
+  .menu button {
+    height: 56px;
+    border-radius: 0;
+    border: 0;
+  }
+  
+  /* 버튼 hover 시 효과 */
+  .menu button:hover {
+    background: #393646;
+    color: #f9f9f9;
+  }
+  
+  /* 오른쪽 화살표 아이콘 (chevron) */
+  .chevron {
+    margin-left: auto;
+    transition: 0.3s ease;
+  }
+  
+  /* 메뉴 열릴 때 chevron 아이콘 회전 */
+  .dropdown.open > button .chevron {
+    rotate: -180deg;
+  }
+  
+  /* 서브 메뉴 */
+  .sub-menu {
     position: absolute;
     width: 230px;
     left: 230px;
     top: 0;
     opacity: 0;
     visibility: hidden;
-}
+    transition: 0.3s ease;
+  }
+  
+  /* 서브 메뉴 열렸을 때 */
+  .sub-menu.open {
+    opacity: 1;
+    visibility: visible;
+  }
+  
