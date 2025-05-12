@@ -1,0 +1,94 @@
+body{
+    background:#1b1921;
+    --color-menu:#2b2935;
+}
+
+.dropdown{
+    position: relative;
+}
+
+button{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px;
+    width: 204px;
+    height: 64px;
+    color: #afb3b5;
+    background:var(--color-menu);
+    border: 0;
+    transition: 0.3s ease;
+}
+
+.dropdown > button{
+    background: #6f3dcd;
+    border-radius: 10px;
+    color: #f9f9f9;
+}
+
+.menu-inner{
+    position: absolute;
+    width: 460px;
+    display: flex;
+    transition: 0.4s ease;
+}
+
+.menu-inner .open{
+    translate: -50%;
+}
+
+.menu button{
+    border: 0;
+    height: 56px;
+    border-radius: 0;
+}
+
+.menu button:hover{
+    background:#393646;
+    color: #f9f9f9;
+}
+
+.chevron {
+    margin-left: auto;
+    transition: 0.3s ease;
+}
+
+.sub-menu .open{
+    opacity: 1;
+    visibility: visible;
+}
+
+.menu{
+    position: absolute;
+    overflow: hidden;
+    z-index: 1;
+    top: 74px;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    translate: 0 -20px;
+    visibility: hidden;
+    border-radius: 10px;
+    border-radius: 10px;
+    background: var(--color-menu);
+    transition: 0.3s ease;
+}
+
+.dropdown .open > button .chevron{
+    rotate: -180deg;
+}
+
+.dropdown .open .menu{
+    opacity: 1;
+    translate: 0;
+    visibility: visible;
+}
+
+.sub-menu{
+    position: absolute;
+    width: 230px;
+    left: 230px;
+    top: 0;
+    opacity: 0;
+    visibility: hidden;
+}
