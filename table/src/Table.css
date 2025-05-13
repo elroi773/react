@@ -1,0 +1,36 @@
+.wrapper {
+    overflow: auto;
+    position: relative;
+    z-index: 2;
+    width: 440px;
+    min-width: 440px;
+    max-width: 440px;
+    background-color: burlywood;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th {
+    user-select: none;
+    background: rgba(255, 255, 255, 0.06);
+    position: relative; /* ✅ 추가 */
+}
+
+table :is(th, td) {
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+table th .draggable {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 6px;
+    cursor: col-resize;
+    background-color: rgba(0, 0, 0, 0.1); /* ✅ 추가 */
+}
