@@ -1,4 +1,6 @@
 // src/Dropdown.jsx
+import "./Dropdown.css";
+
 import React from 'react';
 
 function Dropdown() {
