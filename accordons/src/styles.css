@@ -1,0 +1,56 @@
+section{
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+}
+
+article{
+    position: relative;
+    overflow: hidden;
+    width: 64px;
+    height: 500px;
+    border-radius: 36px;
+    display: flex;
+    align-items: flex-end;
+    opacity: 0.5;
+    transition: 0.5s;
+}
+article:hover{
+    opacity: 0.75;
+}
+
+article .active{
+    width: 400px;
+    opacity: 1;
+}
+
+article.active .content{
+    opacity: 1;
+    visibility: visible;
+}
+
+article .content{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 400px;
+    z-index: 1;
+    opacity: 0;
+    visibility: hidden;
+    padding: 100px 0 20px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background:linear-gradient(to bottom, rgb(0 0 0/0%),rgb(0 0 0 / 80%));
+    transition: 0.25s;
+}
+
+article img {
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    height: 150%;
+    filter: grayscale(0.6);
+}
