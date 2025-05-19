@@ -7,7 +7,7 @@ import {
     useLocation,
 } from "react-router-dom";
 
-import "./styles.css";
+import "./styles.css"; //
 import { Children } from "react"; // 이건 actually 필요 없음. 제거 가능.
 
 const About = () => (
