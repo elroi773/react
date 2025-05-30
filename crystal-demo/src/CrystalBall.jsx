@@ -9,7 +9,7 @@ function CrystalBall() {
 
   useFrame(({ clock }) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += 0.003; // 자전
+      meshRef.current.rotation.x += 0.003; // 자전
     }
     if (materialRef.current) {
       materialRef.current.uniforms.uTime.value = clock.getElapsedTime(); // 시간에 따라 일렁임
