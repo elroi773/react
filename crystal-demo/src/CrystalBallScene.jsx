@@ -1,8 +1,33 @@
 // CrystalBallScene.jsx
 import React, { useRef, useMemo } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Environment, MeshTransmissionMaterial } from "@react-three/drei";
+import { Canvas, useFrame, extend } from "@react-three/fiber";
+import { OrbitControls, Environment, MeshTransmissionMaterial, shaderMaterial } from "@react-three/drei";
 import * as THREE from "three";
+
+// 쉘에 흐르는 반사광 셰이더 머티리얼 정의
+const SurfaceLightMaterial = shaderMaterial(
+  { uTime: 0, color: new THREE.Color("#cc88ff") },
+  `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  `
+    uniform float uTime;
+    uniform vec3 color;
+    varying vec2 vUv;
+
+    void main() {
+      float wave = 0.5 + 0.5 * sin((vUv.y + uTime * 0.6) * 10.0);
+      float edge = smoothstep(0.4, 0.6, vUv.y);
+      vec3 finalColor = color * wave * edge;
+      gl_FragColor = vec4(finalColor, wave * 0.5);
+    }
+  `
+);
+extend({ SurfaceLightMaterial });
 
 function CrystalBall() {
   const meshRef = useRef();
@@ -115,6 +140,20 @@ function RadiantWaves() {
   );
 }
 
+function SurfaceWaveShell() {
+  const ref = useRef();
+  useFrame(({ clock }) => {
+    if (ref.current) ref.current.uTime = clock.getElapsedTime();
+  });
+
+  return (
+    <mesh>
+      <sphereGeometry args={[1.23, 128, 128]} />
+      <surfaceLightMaterial ref={ref} attach="material" transparent depthWrite={false} />
+    </mesh>
+  );
+}
+
 export default function CrystalBallScene() {
   return (
     <Canvas camera={{ position: [0, 0, 4], fov: 45 }}>
@@ -125,6 +164,7 @@ export default function CrystalBallScene() {
         <RadiantWaves />
         <InnerParticles />
         <CrystalBall />
+        <SurfaceWaveShell />
       </group>
       <Environment preset="sunset" />
       <OrbitControls enablePan={false} enableZoom={false} />
