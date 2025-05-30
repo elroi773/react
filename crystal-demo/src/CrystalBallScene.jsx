@@ -4,9 +4,9 @@ import { Canvas, useFrame, extend } from "@react-three/fiber";
 import { OrbitControls, Environment, MeshTransmissionMaterial, shaderMaterial } from "@react-three/drei";
 import * as THREE from "three";
 
-// 쉘에 흐르는 반사광 셰이더 머티리얼 정의
-const SurfaceLightMaterial = shaderMaterial(
-  { uTime: 0, color: new THREE.Color("#cc88ff") },
+// 오로라 바닥 셰이더 머티리얼 정의
+const AuroraWaveMaterial = shaderMaterial(
+  { uTime: 0, color1: new THREE.Color("#d0a4ff"), color2: new THREE.Color("#88f0ff") },
   `
     varying vec2 vUv;
     void main() {
@@ -16,18 +16,33 @@ const SurfaceLightMaterial = shaderMaterial(
   `,
   `
     uniform float uTime;
-    uniform vec3 color;
+    uniform vec3 color1;
+    uniform vec3 color2;
     varying vec2 vUv;
 
     void main() {
-      float wave = 0.5 + 0.5 * sin((vUv.y + uTime * 0.6) * 10.0);
-      float edge = smoothstep(0.4, 0.6, vUv.y);
-      vec3 finalColor = color * wave * edge;
-      gl_FragColor = vec4(finalColor, wave * 0.5);
+      float wave = 0.5 + 0.5 * sin((vUv.x + uTime * 0.5) * 10.0) * cos((vUv.y + uTime * 0.5) * 10.0);
+      float sparkle = pow(sin(uTime * 2.0 + vUv.x * 30.0) * cos(uTime * 2.0 + vUv.y * 30.0), 2.0);
+      vec3 color = mix(color1, color2, wave) + sparkle * 0.1;
+      gl_FragColor = vec4(color, wave * 0.3);
     }
   `
 );
-extend({ SurfaceLightMaterial });
+extend({ AuroraWaveMaterial });
+
+function AuroraFloor() {
+  const ref = useRef();
+  useFrame(({ clock }) => {
+    if (ref.current) ref.current.uTime = clock.getElapsedTime();
+  });
+
+  return (
+    <mesh rotation-x={-Math.PI / 2} position={[0, -1.2, 0]}>
+      <circleGeometry args={[5, 128]} />
+      <auroraWaveMaterial ref={ref} attach="material" transparent depthWrite={false} />
+    </mesh>
+  );
+}
 
 function CrystalBall() {
   const meshRef = useRef();
@@ -38,7 +53,7 @@ function CrystalBall() {
   });
 
   return (
-    <mesh ref={meshRef}>
+    <mesh ref={meshRef} position={[0, 0, 0]}>
       <sphereGeometry args={[1.2, 128, 128]} />
       <MeshTransmissionMaterial
         transmission={1}
@@ -141,6 +156,30 @@ function RadiantWaves() {
 }
 
 function SurfaceWaveShell() {
+  const SurfaceLightMaterial = shaderMaterial(
+    { uTime: 0, color: new THREE.Color("#cc88ff") },
+    `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    `
+      uniform float uTime;
+      uniform vec3 color;
+      varying vec2 vUv;
+
+      void main() {
+        float wave = 0.5 + 0.5 * sin((vUv.y + uTime * 0.6) * 10.0);
+        float edge = smoothstep(0.4, 0.6, vUv.y);
+        vec3 finalColor = color * wave * edge;
+        gl_FragColor = vec4(finalColor, wave * 0.5);
+      }
+    `
+  );
+  extend({ SurfaceLightMaterial });
+
   const ref = useRef();
   useFrame(({ clock }) => {
     if (ref.current) ref.current.uTime = clock.getElapsedTime();
@@ -160,6 +199,7 @@ export default function CrystalBallScene() {
       <ambientLight intensity={0.3} />
       <directionalLight position={[3, 5, 2]} intensity={1} />
       <group>
+        <AuroraFloor />
         <FloatingGlow />
         <RadiantWaves />
         <InnerParticles />
