@@ -7,14 +7,15 @@ import { useRef } from 'react';
 const EnhancedAuroraMaterial = shaderMaterial(
   {
     uTime: 0,
-    color1: new THREE.Color("#e7c7ff"),
-    color2: new THREE.Color("#88f0ff"),
-    sparkleIntensity: 0.3,
+    color1: new THREE.Color("#6a0dad"),  // 진보라
+    color2: new THREE.Color("#b57edc"),  // 연보라
+    color3: new THREE.Color("#ffffaa"),  // 노란빛 포인트
+    intensity: 0.5,
   },
   `
-    varying vec2 vUv;
+    varying vec3 vPosition;
     void main() {
-      vUv = uv;
+      vPosition = (modelMatrix * vec4(position, 1.0)).xyz;
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
   `,
@@ -22,29 +23,37 @@ const EnhancedAuroraMaterial = shaderMaterial(
     uniform float uTime;
     uniform vec3 color1;
     uniform vec3 color2;
-    uniform float sparkleIntensity;
-    varying vec2 vUv;
+    uniform vec3 color3;
+    uniform float intensity;
+    varying vec3 vPosition;
 
-    float noise(vec2 uv) {
-      return fract(sin(dot(uv, vec2(12.9898,78.233))) * 43758.5453);
+    float wavePattern(vec3 pos) {
+      float r = length(pos.xz);
+      float angle = atan(pos.z, pos.x) + uTime * 0.2;
+      return sin(r * 4.0 - uTime * 2.0 + angle * 3.0);
+    }
+
+    float fbmNoise(vec3 pos) {
+      float n = sin(dot(pos, vec3(12.9898, 78.233, 45.543))) * 43758.5453;
+      return fract(n);
     }
 
     void main() {
-      vec2 uv = vUv * 2.0 - 1.0;
-      float r = length(uv);
-      float angle = atan(uv.y, uv.x);
+      float wave = wavePattern(vPosition);
+      float noise = fbmNoise(vPosition * 2.0 + uTime * 0.5);
+      float blend = 0.5 + 0.5 * wave;
+      vec3 color = mix(color1, color2, blend);
 
-      float wave = sin((r - uTime * 0.3) * 12.0 + angle * 5.0);
-      float intensity = smoothstep(0.6, 0.0, r);
-      float sparkle = pow(noise(vUv * 10.0 + uTime * 0.5), 3.0) * sparkleIntensity;
+      // 노란빛 포인트
+      float highlight = smoothstep(0.8, 1.0, noise + 0.3 * sin(uTime * 4.0));
+      color = mix(color, color3, highlight);
 
-      vec3 color = mix(color1, color2, 0.5 + 0.5 * wave);
-      color += sparkle;
-
-      gl_FragColor = vec4(color * intensity, intensity * 0.5);
+      float alpha = intensity * (0.3 + 0.7 * abs(wave)) * (0.6 + 0.4 * noise);
+      gl_FragColor = vec4(color, alpha);
     }
   `
 );
+
 extend({ EnhancedAuroraMaterial });
 
 export default function AuroraFloor() {
@@ -55,7 +64,7 @@ export default function AuroraFloor() {
 
   return (
     <mesh rotation-x={-Math.PI / 2} position={[0, -1.3, 0]}>
-      <circleGeometry args={[6, 256]} />
+      <circleGeometry args={[15, 128]} />
       <enhancedAuroraMaterial ref={ref} attach="material" transparent depthWrite={false} />
     </mesh>
   );
