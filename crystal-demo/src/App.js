@@ -1,5 +1,6 @@
+// App.js (수정 후)
 import React from "react";
-import CrystalBallScene from "./CrystalBallScene.jsx";
+import CrystalBallScene from "./CrystalBallScene";
 
 function App() {
   return (
