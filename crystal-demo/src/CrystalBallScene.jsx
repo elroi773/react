@@ -2,6 +2,7 @@ import React, { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, MeshTransmissionMaterial } from "@react-three/drei";
 import * as THREE from "three";
+import { FloatingParticles } from "./components/Particles";
 
 function CrystalBall() {
   const meshRef = useRef();
@@ -128,13 +129,14 @@ export default function CrystalBallScene() {
   return (
     <Canvas
       camera={{ position: [0, 0, 4], fov: 45 }}
-      style={{ backgroundColor: "#AF89F0" }}
+      style={{ backgroundColor: "#AF89F9" }}
     >
       <ambientLight intensity={0.6} />
       <directionalLight position={[2, 5, 2]} intensity={2} />
       <group>
         <GradientBackground />
         <CrystalBall />
+        <FloatingParticles /> {/* 내부 입자 */}
         {/* <GlowParticles /> */}
         <ShimmeringReflection />
       </group>
