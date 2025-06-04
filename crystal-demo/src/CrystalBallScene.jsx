@@ -136,7 +136,6 @@ export default function CrystalBallScene() {
         <CrystalBall />
         {/* <GlowParticles /> */}
         <ShimmeringReflection />
-        <GradientBackground />
       </group>
       {/* Environment 제거 */}
       <OrbitControls enablePan={false} enableZoom={false} />
