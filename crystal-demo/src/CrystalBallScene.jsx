@@ -12,13 +12,13 @@ function CrystalBall() {
   });
 
   return (
-    <mesh ref={meshRef} position={[0, 0, 0]}>
-      <sphereGeometry args={[1.2, 128, 128]} />
+    <mesh ref={meshRef} position={[0, 0.3, 0]}>
+      <sphereGeometry args={[1.0, 128, 128]} />
       <MeshTransmissionMaterial
         transmission={1}
         roughness={0.05}
-        thickness={1.5}
-        chromaticAberration={0.4}
+        thickness={1.2}
+        chromaticAberration={0.6}
         distortion={0.8}
         temporalDistortion={0.8}
         iridescence={1}
@@ -63,18 +63,49 @@ function GlowParticles() {
   );
 }
 
-function FloorReflection() {
-  const ref = useRef();
+function ShimmeringReflection() {
+  const shaderMaterial = useRef();
+
   useFrame(({ clock }) => {
-    if (ref.current) {
-      ref.current.material.opacity = 0.25 + 0.15 * Math.sin(clock.getElapsedTime());
+    if (shaderMaterial.current) {
+      shaderMaterial.current.uniforms.uTime.value = clock.getElapsedTime();
     }
   });
 
   return (
-    <mesh rotation-x={-Math.PI / 2} position={[0, -1.21, 0]}>
-      <circleGeometry args={[5, 128]} />
-      <meshBasicMaterial color="#a96fff" transparent opacity={0.3} />
+    <mesh rotation-x={-Math.PI / 2} position={[0, -0.7, 0]}>
+      <circleGeometry args={[2.5, 64]} />
+      <shaderMaterial
+        ref={shaderMaterial}
+        transparent
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+        uniforms={{
+          uTime: { value: 0 },
+          uColor1: { value: new THREE.Color("#ffbbff") },
+          uColor2: { value: new THREE.Color("#a0e9ff") },
+        }}
+        vertexShader={`
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `}
+        fragmentShader={`
+          uniform float uTime;
+          uniform vec3 uColor1;
+          uniform vec3 uColor2;
+          varying vec2 vUv;
+          void main() {
+            float len = length(vUv - 0.5);
+            float wave = sin((vUv.x + vUv.y) * 20.0 + uTime * 3.0) * 0.1;
+            float alpha = smoothstep(0.5, 0.2, len) * (0.3 + wave);
+            vec3 color = mix(uColor1, uColor2, vUv.y + 0.2 * sin(uTime));
+            gl_FragColor = vec4(color, alpha);
+          }
+        `}
+      />
     </mesh>
   );
 }
@@ -82,12 +113,12 @@ function FloorReflection() {
 export default function CrystalBallScene() {
   return (
     <Canvas camera={{ position: [0, 0, 4], fov: 45 }}>
-      <ambientLight intensity={0.3} />
-      <directionalLight position={[2, 5, 2]} intensity={1.2} />
+      <ambientLight intensity={0.4} />
+      <directionalLight position={[2, 5, 2]} intensity={1.5} />
       <group>
         <CrystalBall />
         <GlowParticles />
-        <FloorReflection />
+        <ShimmeringReflection />
       </group>
       <Environment preset="sunset" />
       <OrbitControls enablePan={false} enableZoom={false} />
