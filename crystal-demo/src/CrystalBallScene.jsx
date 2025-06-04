@@ -5,7 +5,7 @@ import * as THREE from "three";
 
 function CrystalBall() {
   const meshRef = useRef();
-  
+
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     meshRef.current.rotation.x = t * 0.5;
@@ -18,16 +18,16 @@ function CrystalBall() {
       <MeshTransmissionMaterial
         transmission={1}
         roughness={0.05}
-        thickness={1.5}
-        chromaticAberration={0.7}
-        distortion={0.1}
-        temporalDistortion={0.9}
+        thickness={5} // <- 깊이감 있게
+        chromaticAberration={1}
+        distortion={0.5}
+        temporalDistortion={1}
         iridescence={1}
-        iridescenceIOR={1.5}
+        iridescenceIOR={1.6}
         clearcoat={1}
-        clearcoatRoughness={0.05}
-        attenuationColor="#d8b4ff" // 더 밝은 보라색
-        attenuationDistance={1.5} // 좀 더 멀리 퍼지게
+        clearcoatRoughness={0.02}
+        attenuationColor="#f5c8ff" // 밝은 핑보라색
+        attenuationDistance={2.5} // 더 깊게 퍼지도록
         backside
       />
     </mesh>
@@ -133,11 +133,12 @@ export default function CrystalBallScene() {
       <ambientLight intensity={0.6} />
       <directionalLight position={[2, 5, 2]} intensity={2} />
       <group>
+        <GradientBackground />
         <CrystalBall />
         {/* <GlowParticles /> */}
         <ShimmeringReflection />
       </group>
-      {/* Environment 제거 */}
+
       <OrbitControls enablePan={false} enableZoom={false} />
     </Canvas>
   );
