@@ -1,65 +1,36 @@
 import React, { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Environment, MeshTransmissionMaterial } from "@react-three/drei";
+import { OrbitControls, MeshTransmissionMaterial } from "@react-three/drei";
 import * as THREE from "three";
 
 function CrystalBall() {
   const meshRef = useRef();
+  
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
-    meshRef.current.rotation.x = t * 0.15;
-    meshRef.current.rotation.y = t * 0.2;
+    meshRef.current.rotation.x = t * 0.5;
+    meshRef.current.rotation.y = t * 0.8;
   });
 
   return (
-    <mesh ref={meshRef} position={[0, 0.3, 0]}>
+    <mesh ref={meshRef} position={[0, 0.05, 0]}>
       <sphereGeometry args={[1.0, 128, 128]} />
       <MeshTransmissionMaterial
         transmission={1}
         roughness={0.05}
-        thickness={1.2}
-        chromaticAberration={0.6}
-        distortion={0.8}
-        temporalDistortion={0.8}
+        thickness={1.5}
+        chromaticAberration={0.7}
+        distortion={0.1}
+        temporalDistortion={0.9}
         iridescence={1}
-        iridescenceIOR={1.4}
+        iridescenceIOR={1.5}
         clearcoat={1}
-        clearcoatRoughness={0.1}
-        attenuationColor="#c1a0ff"
-        attenuationDistance={0.5}
+        clearcoatRoughness={0.05}
+        attenuationColor="#d8b4ff" // 더 밝은 보라색
+        attenuationDistance={1.5} // 좀 더 멀리 퍼지게
         backside
       />
     </mesh>
-  );
-}
-
-function GlowParticles() {
-  const count = 150;
-  const positions = useMemo(() => {
-    const arr = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const r = Math.random() * 1.0;
-      const theta = Math.random() * 2 * Math.PI;
-      const phi = Math.acos(2 * Math.random() - 1);
-      arr[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      arr[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-      arr[i * 3 + 2] = r * Math.cos(phi);
-    }
-    return arr;
-  }, [count]);
-
-  const ref = useRef();
-  useFrame(({ clock }) => {
-    ref.current.rotation.y = clock.getElapsedTime() * 0.15;
-  });
-
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" array={positions} count={count} itemSize={3} />
-      </bufferGeometry>
-      <pointsMaterial size={0.03} color="#ffffff" opacity={0.7} transparent />
-    </points>
   );
 }
 
@@ -84,6 +55,7 @@ function ShimmeringReflection() {
           uTime: { value: 0 },
           uColor1: { value: new THREE.Color("#ffbbff") },
           uColor2: { value: new THREE.Color("#a0e9ff") },
+          uColor2: { value: new THREE.Color("#ffd5f2") },
         }}
         vertexShader={`
           varying vec2 vUv;
@@ -96,6 +68,7 @@ function ShimmeringReflection() {
           uniform float uTime;
           uniform vec3 uColor1;
           uniform vec3 uColor2;
+          uniform vec3 uColor3;
           varying vec2 vUv;
           void main() {
             float len = length(vUv - 0.5);
@@ -110,17 +83,62 @@ function ShimmeringReflection() {
   );
 }
 
+function GradientBackground() {
+  const shaderMaterial = useRef();
+
+  useFrame(({ clock }) => {
+    if (shaderMaterial.current) {
+      shaderMaterial.current.uniforms.uTime.value = clock.getElapsedTime();
+    }
+  });
+
+  return (
+    <mesh scale={[10, 10, 10]} rotation={[0, 0, 0]}>
+      <sphereGeometry args={[1, 64, 64]} />
+      <shaderMaterial
+        ref={shaderMaterial}
+        side={THREE.BackSide}
+        uniforms={{
+          uTime: { value: 0 },
+        }}
+        vertexShader={`
+          varying vec3 vPosition;
+          void main() {
+            vPosition = position;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `}
+        fragmentShader={`
+          varying vec3 vPosition;
+
+          void main() {
+            float y = normalize(vPosition).y;
+            vec3 topColor = vec3(0.8, 0.5, 1.0);   // 보라빛
+            vec3 bottomColor = vec3(0.2, 0.0, 0.3); // 짙은 자주
+            vec3 color = mix(bottomColor, topColor, smoothstep(-1.0, 1.0, y));
+            gl_FragColor = vec4(color, 1.0);
+          }
+        `}
+      />
+    </mesh>
+  );
+}
+
 export default function CrystalBallScene() {
   return (
-    <Canvas camera={{ position: [0, 0, 4], fov: 45 }}>
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[2, 5, 2]} intensity={1.5} />
+    <Canvas
+      camera={{ position: [0, 0, 4], fov: 45 }}
+      style={{ backgroundColor: "#AF89F0" }}
+    >
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[2, 5, 2]} intensity={2} />
       <group>
         <CrystalBall />
-        <GlowParticles />
+        {/* <GlowParticles /> */}
         <ShimmeringReflection />
+        <GradientBackground />
       </group>
-      <Environment preset="sunset" />
+      {/* Environment 제거 */}
       <OrbitControls enablePan={false} enableZoom={false} />
     </Canvas>
   );
