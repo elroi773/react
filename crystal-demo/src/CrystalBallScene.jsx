@@ -129,7 +129,6 @@ export default function CrystalBallScene() {
   return (
     <Canvas
       camera={{ position: [0, 0, 4], fov: 45 }}
-      style={{ backgroundColor: "#AF89F9" }}
     >
       <ambientLight intensity={0.6} />
       <directionalLight position={[2, 5, 2]} intensity={2} />
@@ -138,7 +137,7 @@ export default function CrystalBallScene() {
         <CrystalBall />
         <FloatingParticles /> {/* 내부 입자 */}
         {/* <GlowParticles /> */}
-        <ShimmeringReflection />
+        {/* <ShimmeringReflection /> */}
       </group>
 
       <OrbitControls enablePan={false} enableZoom={false} />
