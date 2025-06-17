@@ -11,6 +11,9 @@ function CrystalBall() {
     const t = clock.getElapsedTime();
     meshRef.current.rotation.x = t * 0.5;
     meshRef.current.rotation.y = t * 0.8;
+
+    meshRef.current.position.y = 0.05 + Math.sin(t * 1.5) * 0.05;
+
   });
 
   return (
