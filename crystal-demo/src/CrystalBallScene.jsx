@@ -9,11 +9,16 @@ function CrystalBall() {
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
-    meshRef.current.rotation.x = t * 0.5;
-    meshRef.current.rotation.y = t * 0.8;
 
-    meshRef.current.position.y = 0.05 + Math.sin(t * 1.5) * 0.05;
+    const floatY = 0.05 + Math.sin(t * 1.2) * 0.08; // 부드러운 상하 움직임
+    const swayX = Math.sin(t * 0.7) * 0.03; // 좌우 흔들림
+    const swayZ = Math.sin(t * 0.9 + 1) * 0.02; // 앞뒤 흔들림
+    const rollZ = Math.sin(t * 0.5) * 0.05; // 살짝 z축 회전
 
+    meshRef.current.position.set(swayX, floatY, swayZ);
+    meshRef.current.rotation.x = t * 0.3;
+    meshRef.current.rotation.y = t * 0.6;
+    meshRef.current.rotation.z = rollZ;
   });
 
   return (
@@ -130,9 +135,7 @@ function GradientBackground() {
 
 export default function CrystalBallScene() {
   return (
-    <Canvas
-      camera={{ position: [0, 0, 4], fov: 45 }}
-    >
+    <Canvas camera={{ position: [0, 0, 4], fov: 45 }}>
       <ambientLight intensity={0.6} />
       <directionalLight position={[2, 5, 2]} intensity={2} />
       <group>
