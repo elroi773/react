@@ -4,6 +4,7 @@ import { OrbitControls, MeshTransmissionMaterial } from "@react-three/drei";
 import * as THREE from "three";
 import { FloatingParticles } from "./components/Particles";
 
+
 function CrystalBall() {
   const meshRef = useRef();
 
