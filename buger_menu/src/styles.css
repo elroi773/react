@@ -143,3 +143,75 @@
     line-height: 1.66;
     opacity: 0.6;
   }
+
+
+  .burger {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000;
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+  
+  .background {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    transition: left 0.3s;
+    z-index: 500;
+  }
+  .background.open {
+    left: 0;
+  }
+  
+  .menu {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background: #222;
+    color: #fff;
+    transition: left 0.3s;
+    z-index: 999;
+    padding: 2rem;
+  }
+  .menu.open {
+    left: 0;
+  }
+  
+  .menu nav a {
+    display: block;
+    margin: 1rem 0;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .menu nav a.appear {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .page {
+    padding: 2rem;
+    margin-left: 0;
+    transition: margin-left 0.3s;
+  }
+  .page.open {
+    margin-left: 250px;
+  }
+  
+  .page-content {
+    max-width: 600px;
+    margin: auto;
+  }
+  
