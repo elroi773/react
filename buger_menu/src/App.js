@@ -1,5 +1,4 @@
-// App.js
-import { Menu } from "./Menu";
+import Menu from "./Menu";
 
 function App() {
   return <Menu />;
