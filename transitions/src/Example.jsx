@@ -5,103 +5,122 @@ import {
     Outlet,
     useNavigate,
     useLocation,
-} from "react-router-dom";
-
-import "./styles.css"; //
-import { Children } from "react"; // 이건 actually 필요 없음. 제거 가능.
-
-const About = () => (
+  } from "react-router-dom";
+  import "./styles.css";
+  
+  const About = () => (
     <section style={{ background: "#fff", color: "#000" }}>
-        <Nav title="About" />
+      <Nav title="Home" />
     </section>
-);
-
-const Portfolio = () => (
+  );
+  
+  const Portfolio = () => (
     <section style={{ background: "#000", color: "#fff" }}>
-        <Nav title="Portfolio" />
+      <Nav title="Portfolio" />
     </section>
-);
-
-const Contact = () => (
-    <section style={{ background: "#000", color: "#fff" }}>
-        <Nav title="Contact" />
+  );
+  
+  const Contact = () => (
+    <section style={{ background: "#fff", color: "#000" }}>
+      <Nav title="Contact" />
     </section>
-);
-
-const Vision = () => (
-    <section style={{ background: "#000", color: "#fff" }}>
-        <Nav title="Vision" />
-    </section>
-);
-
-const Linkk = ({ to, children, colorEnd }) => {
+  );
+  
+  const Link = ({ to, children, colorEnd }) => {
     const navigate = useNavigate();
     const location = useLocation();
-
+  
     const handleClicked = () => {
-        const bubbles = document.querySelector("#bubbles");
-        bubbles.classList.add("show");
-
-        const bubbleSeconde = bubbles.querySelector("div:nth-child(2)");
-        bubbleSeconde.style.background = colorEnd;
-
-        setTimeout(() => navigate(to), 1000); // 1000ms = 1초. 너무 길면 UX 안 좋아요.
-
-        setTimeout(() => {
-            bubbles.classList.remove("show");
-            bubbles.classList.add("hide");
-        }, 1200);
-
-        setTimeout(() => bubbles.classList.remove("hide"), 2400);
+      const bubbles = document.getElementById("bubbles");
+      if (!bubbles) return;
+  
+      bubbles.classList.add("show");
+  
+      const bubbleSecond = bubbles.querySelector("div:nth-child(2)");
+      if (bubbleSecond) bubbleSecond.style.background = colorEnd;
+  
+      setTimeout(() => navigate(to), 1000);
+      setTimeout(() => {
+        bubbles.classList.remove("show");
+        bubbles.classList.add("hide");
+      }, 1200);
+      setTimeout(() => bubbles.classList.remove("hide"), 2400);
     };
-
-    return <a onClick={handleClicked}>{children}</a>;
-};
-
-const Nav = ({ title }) => (
+  
+    return (
+      <a
+        className={
+          location.pathname.includes(children?.toString().toLowerCase())
+            ? "active"
+            : ""
+        }
+        onClick={handleClicked}
+      >
+        {children}
+      </a>
+    );
+  };
+  
+  const Nav = ({ title }) => (
     <nav>
-        <h1>{title}</h1>
-        <ul>
-            <li><Linkk to="/about" colorEnd="#fff">About</Linkk></li>
-            <li><Linkk to="/portfolio" colorEnd="#fff">Portfolio</Linkk></li>
-            <li><Linkk to="/contact" colorEnd="#fff">Contact</Linkk></li>
-            <li><Linkk to="/vision" colorEnd="#fff">Vision</Linkk></li>
-        </ul>
+      <h1 style={{ animation: "appear 0.25s 0.2s both" }}>{title}</h1>
+      <ul style={{ animation: "appear 0.25s 0.4s both" }}>
+        <li>
+          <Link to="/about" colorEnd="#fff">
+            About
+          </Link>
+        </li>
+        <li>
+          <Link to="/portfolio" colorEnd="#000">
+            Portfolio
+          </Link>
+        </li>
+        <li>
+          <Link to="/contact" colorEnd="#fff">
+            Contact
+          </Link>
+        </li>
+      </ul>
     </nav>
-);
-
-const Bubbles = () => (
-    <div id="bubbles">
+  );
+  
+  const duration = 1200;
+  
+  const Bubbles = () => {
+    return (
+      <div id="bubbles">
         <div
-            style={{ animationDuration: "1200ms" }}
-            className="bubbles__first"
+          style={{ animationDuration: `${duration}ms` }}
+          className="bubbles__first"
         />
         <div
-            style={{ animationDuration: "1200ms" }}
-            className="bubbles__second"
+          style={{ animationDuration: `${duration}ms` }}
+          className="bubbles__second"
         />
-    </div>
-);
-
-const Layout = () => (
-    <>
+      </div>
+    );
+  };
+  
+  const Layout = () => {
+    return (
+      <>
         <Bubbles />
         <Outlet />
-    </>
-);
-
-export const Example = () => {
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Layout />}>
-                    <Route path="about" element={<About />} />
-                    <Route path="portfolio" element={<Portfolio />} />
-                    <Route path="contact" element={<Contact />} />
-                    <Route path="vision" element={<Vision />} />
-                </Route>
-            </Routes>
-        </BrowserRouter>
+      </>
     );
-};
-
+  };
+  
+  export const Example = () => {
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route path="about" element={<About />} />
+            <Route path="portfolio" element={<Portfolio />} />
+            <Route path="contact" element={<Contact />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    );
+  };
+  
