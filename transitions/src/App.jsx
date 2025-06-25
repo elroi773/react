@@ -1,9 +1,8 @@
-// App.jsx
-import { Example } from "./Example"; // 파일 경로 확인 필요
+import { Example } from "./Example";
+import "./styles.css";
 
 function App() {
   return <Example />;
 }
-
 
 export default App;
